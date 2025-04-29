@@ -5,6 +5,10 @@ const loginPage = (req, res) => {
     return res.render('login');
 };
 
+const changePasswordPage = (req, res) => {
+    return res.render('changePassword');
+};
+
 const logout = (req, res) =>{
     req.session.destroy();
     return res.redirect('/');
@@ -59,11 +63,40 @@ const signup = async (req,res) =>{
         return res.status(500).json({error: 'An error occured!'});
     }
 };
-    
+
+const changePassword = async (req, res) => {
+    const { username, oldPass, newPass, newPass2 } = req.body;
+
+    if (!username || !oldPass || !newPass || !newPass2) {
+        return res.status(400).json({ error: 'All fields are required!' });
+    }
+
+    if (newPass !== newPass2) {
+        return res.status(400).json({ error: 'New passwords do not match!' });
+    }
+
+    try {
+        const account = await Account.authenticate(username, oldPass, (err, account) => {
+            if (err || !account) {
+                return res.status(401).json({ error: 'Old password is incorrect!' });
+            }
+        });
+
+        account.password = await Account.generateHash(newPass);
+        await account.save();
+
+        return res.status(200).json({ message: 'Password changed successfully!' });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'An error occurred while changing the password.' });
+    }
+};
 
 module.exports ={
     loginPage,
     logout,
     login,
     signup,
+    changePasswordPage,
+    changePassword,
 }

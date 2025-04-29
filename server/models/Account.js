@@ -59,7 +59,7 @@ AccountSchema.statics.authenticate = async (username, password, callback) => {
   try {
     const doc = await AccountModel.findOne({username}).exec();
     if(!doc) {
-      return callback();
+      return null;
     }
 
     const match = await bcrypt.compare(password, doc.password);
@@ -70,6 +70,10 @@ AccountSchema.statics.authenticate = async (username, password, callback) => {
   } catch (err) {
     return callback(err);
   }
+};
+
+AccountSchema.statics.findByUsername = (username) => {
+  return AccountModel.findOne({ username }).exec();
 };
 
 AccountModel = mongoose.model('Account', AccountSchema);

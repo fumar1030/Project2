@@ -1,9 +1,11 @@
 const path = require('path');
+const { changePassword } = require('./server/controllers/Account');
 
 module.exports = {
     entry: {
         app: './client/maker.jsx',
         login: './client/login.jsx',
+        changePassword: './client/changePassword.jsx',
     },
     module: {
         rules: [
