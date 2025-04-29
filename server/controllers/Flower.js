@@ -71,9 +71,29 @@ const waterFlower = async (req, res) => {
   }
 };
 
+const deleteFlower = async (req, res) => {
+  try {
+    const result = await Flower.deleteOne({
+      _id: req.params.id,
+      owner: req.session.account._id,
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Flower not found or not owned by user' });
+    }
+
+    return res.status(200).json({ message: 'Flower deleted successfully' });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error deleting flower' });
+  }
+};
+
+
 module.exports = {
   gardenPage,
   plantFlower,
   getFlowers,
   waterFlower,
+  deleteFlower,
 };
