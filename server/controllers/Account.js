@@ -25,7 +25,7 @@ const login = (req, res) =>{
 
         req.session.account = Account.toAPI(account);
 
-        return res.json({redirect: '/maker'});
+        return res.json({redirect: '/garden'});
     });
 };
 
@@ -49,7 +49,7 @@ const signup = async (req,res) =>{
         const newAccount = new Account({username,password:hash});
         await newAccount.save();
         req.session.account = Account.toAPI(newAccount);
-        return res.json({redirect: '/maker'});
+        return res.json({redirect: '/garden'});
     }
     catch(err){
         console.log(err);
