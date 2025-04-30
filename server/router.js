@@ -16,7 +16,6 @@ const router = (app) => {
     app.get('/getFlowers', mid.requiresLogin, controllers.Flower.getFlowers);
     app.post('/garden', mid.requiresLogin, controllers.Flower.plantFlower);
     app.post('/water/:id', mid.requiresLogin, controllers.Flower.waterFlower);
-    app.delete('/flower/:id', mid.requiresLogin, controllers.Flower.deleteFlower);
 
     app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };

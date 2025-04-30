@@ -2,7 +2,6 @@ const helper = require('./helper');
 const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
-const FlowerCard = require('./flowerCard.jsx');
 
 //Handle planting a new flower
 const handleFlower = (e, onFlowerAdded) => {
@@ -56,10 +55,6 @@ const FlowerList = (props) => {
     await helper.sendPost(`/water/${id}`, {}, props.triggerReload);
   };
 
-  const handleDelete = async (id) => {
-    await helper.sendDelete(`/flower/${id}`, {}, props.triggerReload);
-  }; 
-
   if (flowers.length === 0) {
     return (
       <div className="flowerList">
@@ -69,7 +64,25 @@ const FlowerList = (props) => {
   }
 
   const flowerNodes = flowers.map((flower) => {
-    <FlowerCard key={flower.id} flower={flower} onWater={handleWater} />
+    return (
+      <div key={flower.id} className="flower">
+        <img
+          src={`/assets/img/flower_stage_${flower.progress}.png`}
+          alt={`flower stage ${flower.progress}`}
+          className="flowerImage"
+        />
+        <h3 className="flowerName">🌼 Name: {flower.name}</h3>
+        <h4 className="flowerProgress">Progress: {flower.progress} / 5</h4>
+        <h4 className="flowerStatus">
+          Status: {flower.isBloomed ? 'Bloomed! 🌸' : 'Growing...'}
+        </h4>
+        {!flower.isBloomed && (
+          <button className="waterButton" onClick={() => handleWater(flower.id)}>
+            Water 🌧️
+          </button>
+        )}
+      </div>
+    );
   });
 
   return <div className="flowerList">{flowerNodes}</div>;

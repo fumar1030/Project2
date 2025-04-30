@@ -28,23 +28,6 @@ const handleError = (message) => {
     }
   };
 
-  const sendDelete = async (url, data, onSuccess) => {
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-  
-    const result = await response.json();
-    if (response.ok) {
-      onSuccess();
-    } else {
-      handleError(result.error);
-    }
-  };
-
   const hideError = () => {
     document.getElementById('domoMessage').classList.add('hidden');
   };
@@ -52,6 +35,5 @@ const handleError = (message) => {
   module.exports = {
     handleError,
     sendPost,
-    sendDelete,
     hideError,
   };
