@@ -96,7 +96,6 @@ const authenticateAsync = (username, password) =>
         }
         resolve(account);
     });
-    return;
     });
 
 authenticateAsync(req.session.account.username, oldPass)
@@ -113,6 +112,7 @@ authenticateAsync(req.session.account.username, oldPass)
         : 'Error saving new password';
     return res.status(500).json({ error: msg });
     });
+    return;
 };
   
   
