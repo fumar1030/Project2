@@ -103,6 +103,8 @@ Account.authenticate(req.session.account.username, oldPass, async function (err,
     console.log(e);
     return res.status(500).json({ error: 'Error saving new password' });
     }
+
+    return null;
 });
 };
   
