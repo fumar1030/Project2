@@ -94,8 +94,9 @@ const authenticateAsync = (username, password) =>
         if (err || !account) {
         return reject(new Error('Invalid credentials'));
         }
-        return resolve(account);
+        resolve(account);
     });
+    return;
     });
 
 authenticateAsync(req.session.account.username, oldPass)
