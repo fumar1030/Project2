@@ -94,7 +94,7 @@ const authenticateAsync = (username, password) =>
         if (err || !account) {
         return reject(new Error('Invalid credentials'));
         }
-        resolve(account);
+        return resolve(account);
     });
     });
 
@@ -112,7 +112,6 @@ authenticateAsync(req.session.account.username, oldPass)
         : 'Error saving new password';
     return res.status(500).json({ error: msg });
     });
-    return;
 };
   
   
