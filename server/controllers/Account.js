@@ -96,6 +96,9 @@ const authenticateAsync = (username, password) =>
         }
         return resolve(account);
     });
+
+    return null;
+
     });
 
 authenticateAsync(req.session.account.username, oldPass)
