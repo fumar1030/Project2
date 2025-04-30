@@ -88,14 +88,14 @@ if (newPass !== newPass2) {
     return res.status(400).json({ error: 'New passwords do not match' });
 }
 
-Account.authenticate(req.session.account.username, oldPass, async (err, account) => {
+Account.authenticate(req.session.account.username, oldPass, async function (err, account) {
     if (err || !account) {
     return res.status(401).json({ error: 'Incorrect current password' });
     }
 
     try {
     const hash = await Account.generateHash(newPass);
-    account.password = hash;
+    account.set('password', hash);
     await account.save();
 
     return res.status(200).json({ message: 'Password updated successfully' });
@@ -104,7 +104,8 @@ Account.authenticate(req.session.account.username, oldPass, async (err, account)
     return res.status(500).json({ error: 'Error saving new password' });
     }
 });
-}; 
+};
+  
 
 module.exports ={
     loginPage,
