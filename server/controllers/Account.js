@@ -14,21 +14,22 @@ const logout = (req, res) =>{
     return res.redirect('/');
 };
 
-const login = (req, res) => {
+const login = (req, res) =>{
     const username = `${req.body.username}`;
     const pass = `${req.body.pass}`;
 
-    if (!username || !pass) {
-        return res.status(400).json({ error: 'Must have username and password' });
+    if(!username || !pass){
+        return res.status(400).json({error: 'Must have username and password'});
     }
 
-    Account.authenticate(username, pass, (err, account) => {
-        if (err || !account) {
-            return res.status(401).json({ error: 'Wrong username or password!' });
+    return Account.authenticate(username, pass, (err, account) => {
+        if(err || !account){
+            return res.status(401).json({error: 'Wrong username or password!'});
         }
 
         req.session.account = Account.toAPI(account);
-        return res.json({ redirect: '/garden' });
+
+        return res.json({redirect: '/garden'});
     });
 };
 
@@ -88,12 +89,14 @@ if (newPass !== newPass2) {
 }
 
 const authenticateAsync = (username, password) =>
-    new Promise((resolve, reject) => Account.authenticate(username, password, (err, account) => {
+    new Promise((resolve, reject) => {
+    Account.authenticate(username, password, (err, account) => {
         if (err || !account) {
         return reject(new Error('Invalid credentials'));
         }
         return resolve(account);
-    }));
+    });
+    });
 
 authenticateAsync(req.session.account.username, oldPass)
     .then(async (account) => {
