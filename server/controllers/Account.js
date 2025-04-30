@@ -74,8 +74,8 @@ const buyMoreSpace = async (req, res) => {
     } catch (err) {
       console.log(err);
       return res.status(500).json({ error: 'Could not increase flower capacity.' });
-    }
-  };
+    };
+ };
 
 const changePassword = (req, res) => {
 const { oldPass, newPass, newPass2 } = req.body;
@@ -90,12 +90,13 @@ if (newPass !== newPass2) {
 
 const authenticateAsync = (username, password) =>
     new Promise((resolve, reject) => {
-    Account.authenticate(username, password, (err, account) => {
+      Account.authenticate(username, password, (err, account) => {
         if (err || !account) {
-        return reject(new Error('Invalid credentials'));
+          reject(new Error('Invalid credentials'));
+          return;
         }
-        return resolve(account);
-    });
+        resolve(account);
+      });
     });
 
 authenticateAsync(req.session.account.username, oldPass)
