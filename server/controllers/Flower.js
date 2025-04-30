@@ -1,5 +1,6 @@
 const models = require('../models');
 const Flower = models.Flower;
+const Account = models.Account;
 
 const gardenPage = async (req, res) => {
   return res.render('app');
@@ -10,16 +11,29 @@ const plantFlower = async (req, res) => {
     return res.status(400).json({ error: 'Flower name is required' });
   }
 
-  const flowerData = {
-    name: req.body.name,
-    progress: 0,
-    owner: req.session.account._id,
-  };
-
   try {
+    const ownerId = req.session.account._id;
+    const flowerCount = await Flower.countDocuments({ owner: ownerId });
+
+    const user = await Account.findById(ownerId).exec();
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    if (flowerCount >= user.flowerLimit) {
+      return res.status(400).json({ error: 'Need flower space!' });
+    }
+
+    const flowerData = {
+      name: req.body.name,
+      progress: 0,
+      owner: ownerId,
+    };
+
     const newFlower = new Flower(flowerData);
     await newFlower.save();
     return res.status(201).json(Flower.toAPI(newFlower));
+
   } catch (err) {
     console.log(err);
     if (err.code === 11000) {

@@ -59,11 +59,25 @@ const signup = async (req,res) =>{
         return res.status(500).json({error: 'An error occured!'});
     }
 };
-    
+
+const buyMoreSpace = async (req, res) => {
+    try {
+      const account = await Account.findById(req.session.account._id).exec();
+      account.flowerLimit += 10;
+      await account.save();
+  
+      return res.status(200).json({ message: 'Purchased 10 more flower slots!' });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Could not increase flower capacity.' });
+    }
+  };
+   
 
 module.exports ={
     loginPage,
     logout,
     login,
     signup,
+    buyMoreSpace,
 }

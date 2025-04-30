@@ -33,6 +33,10 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  flowerLimit: {
+    type: Number,
+    default: 10,
+  },  
   createdDate: {
     type: Date,
     default: Date.now,

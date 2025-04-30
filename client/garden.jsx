@@ -100,9 +100,29 @@ const FlowerList = ({ reloadFlowers, triggerReload, isWatering }) => {
   );
 };
 
+
 const App = () => {
   const [reloadFlowers, setReloadFlowers] = useState(false);
   const [isWatering, setIsWatering] = useState(false);
+
+  useEffect(() => {
+    const buyBtn = document.getElementById('buySpaceBtn');
+    if (buyBtn) {
+      buyBtn.onclick = async () => {
+        try {
+          const response = await fetch('/buySpace', { method: 'POST' });
+          const result = await response.json();
+          if (!response.ok) {
+            helper.handleError(result.error);
+          } else {
+            alert(result.message);
+          }
+        } catch (err) {
+          helper.handleError('Error buying more space.');
+        }
+      };
+    }
+  }, []);
 
   return (
     <div>

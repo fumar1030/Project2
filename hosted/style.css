@@ -8,14 +8,11 @@ html, body {
 
   body {
     background: url('/assets/img/background.png') repeat;
-    background-size: 1470px 980px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     height: 100%;
   }
-  
-  
   
   
   nav {
@@ -215,7 +212,6 @@ html, body {
   }
   
   #errorLog {
-    display: none;
   }
   
   #sunflower {
