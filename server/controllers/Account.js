@@ -88,25 +88,32 @@ if (newPass !== newPass2) {
     return res.status(400).json({ error: 'New passwords do not match' });
 }
 
-Account.authenticate(req.session.account.username, oldPass, async function (err, account) {
-    if (err || !account) {
-    return res.status(401).json({ error: 'Incorrect current password' });
-    }
+const authenticateAsync = (username, password) =>
+    new Promise((resolve, reject) => {
+    Account.authenticate(username, password, (err, account) => {
+        if (err || !account) {
+        return reject(new Error('Invalid credentials'));
+        }
+        return resolve(account);
+    });
+    });
 
-    try {
+authenticateAsync(req.session.account.username, oldPass)
+    .then(async (account) => {
     const hash = await Account.generateHash(newPass);
     account.set('password', hash);
     await account.save();
-
     return res.status(200).json({ message: 'Password updated successfully' });
-    } catch (e) {
-    console.log(e);
-    return res.status(500).json({ error: 'Error saving new password' });
-    }
-
-    return null;
-});
+    })
+    .catch((err) => {
+    const msg =
+        err.message === 'Invalid credentials'
+        ? 'Incorrect current password'
+        : 'Error saving new password';
+    return res.status(500).json({ error: msg });
+    });
 };
+  
   
 
 module.exports ={
