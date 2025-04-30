@@ -89,17 +89,12 @@ if (newPass !== newPass2) {
 }
 
 const authenticateAsync = (username, password) =>
-    new Promise((resolve, reject) => {
-    Account.authenticate(username, password, (err, account) => {
+    new Promise((resolve, reject) => Account.authenticate(username, password, (err, account) => {
         if (err || !account) {
         return reject(new Error('Invalid credentials'));
         }
         return resolve(account);
-    });
-
-    return null;
-
-    });
+    }));
 
 authenticateAsync(req.session.account.username, oldPass)
     .then(async (account) => {
