@@ -1,30 +1,33 @@
+// garden.jsx
 const helper = require('./helper');
 const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require('react-dom/client');
 
-//Handle planting a new flower
-const handleFlower = (e, onFlowerAdded) => {
-  e.preventDefault();
-  helper.hideError();
+const getRandomPosition = () => ({
+  top: `${Math.floor(Math.random() * 70) + 10}%`,
+  left: `${Math.floor(Math.random() * 80) + 10}%`,
+});
 
-  const name = e.target.querySelector('#flowerName').value;
-
-  if (!name) {
-    helper.handleError('Flower name is required');
-    return false;
-  }
-
-  helper.sendPost(e.target.action, { name }, onFlowerAdded);
-  return false;
-};
-
-//Flower planting form
 const FlowerForm = (props) => {
+  const handleFlower = (e) => {
+    e.preventDefault();
+    helper.hideError();
+
+    const name = e.target.querySelector('#flowerName').value;
+    if (!name) {
+      helper.handleError('Flower name is required');
+      return false;
+    }
+
+    helper.sendPost(e.target.action, { name }, props.triggerReload);
+    return false;
+  };
+
   return (
     <form
       id="flowerForm"
-      onSubmit={(e) => handleFlower(e, props.triggerReload)}
+      onSubmit={handleFlower}
       name="flowerForm"
       action="/garden"
       method="POST"
@@ -37,68 +40,86 @@ const FlowerForm = (props) => {
   );
 };
 
-//Display and water flowers
-const FlowerList = (props) => {
-  const [flowers, setFlowers] = useState(props.flowers);
+const FlowerList = ({ reloadFlowers, triggerReload, isWatering }) => {
+  const [flowers, setFlowers] = useState([]);
+  const [positions, setPositions] = useState({});
+  const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
     const loadFlowersFromServer = async () => {
       const response = await fetch('/getFlowers');
       const data = await response.json();
+
+      const newPositions = { ...positions };
+      data.flowers.forEach((f) => {
+        if (!newPositions[f.id]) {
+          newPositions[f.id] = getRandomPosition();
+        }
+      });
+
+      setPositions(newPositions);
       setFlowers(data.flowers);
     };
-
     loadFlowersFromServer();
-  }, [props.reloadFlowers]);
+  }, [reloadFlowers]);
 
   const handleWater = async (id) => {
-    await helper.sendPost(`/water/${id}`, {}, props.triggerReload);
+    await helper.sendPost(`/water/${id}`, {}, triggerReload);
   };
 
-  if (flowers.length === 0) {
-    return (
-      <div className="flowerList">
-        <h3 className="emptyFlower">No flowers planted yet!</h3>
-      </div>
-    );
-  }
-
-  const flowerNodes = flowers.map((flower) => {
-    return (
-      <div key={flower.id} className="flower">
-        <img
-          src={`/assets/img/flower_stage_${flower.progress}.png`}
-          alt={`flower stage ${flower.progress}`}
-          className="flowerImage"
-        />
-        <h3 className="flowerName">🌼 Name: {flower.name}</h3>
-        <h4 className="flowerProgress">Progress: {flower.progress} / 5</h4>
-        <h4 className="flowerStatus">
-          Status: {flower.isBloomed ? 'Bloomed! 🌸' : 'Growing...'}
-        </h4>
-        {!flower.isBloomed && (
-          <button className="waterButton" onClick={() => handleWater(flower.id)}>
-            Water 🌧️
-          </button>
-        )}
-      </div>
-    );
-  });
-
-  return <div className="flowerList">{flowerNodes}</div>;
+  return (
+    <div className="flowerList" style={{ position: 'relative', width: '100%', height: '80vh' }}>
+      {flowers.map((flower) => (
+        <div
+          key={flower.id}
+          className="flower"
+          style={{ position: 'absolute', ...positions[flower.id], cursor: 'pointer' }}
+          onClick={() => {
+            if (isWatering) {
+              handleWater(flower.id);
+            } else {
+              setExpanded(expanded === flower.id ? null : flower.id);
+            }
+          }}
+        >
+          <img
+            src={`/assets/img/flower_stage_${flower.progress}.png`}
+            alt={`flower stage ${flower.progress}`}
+            className="flowerImage"
+          />
+          <div className="nameTag">{flower.name}</div>
+          {expanded === flower.id && (
+            <div className="flowerDetails">
+              <div className="flowerProgress">Progress: {flower.progress}/5</div>
+              <div className="flowerStatus">Status: {flower.isBloomed ? 'Bloomed! 🌸' : 'Growing...'}</div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 };
 
-//Main app layout
 const App = () => {
   const [reloadFlowers, setReloadFlowers] = useState(false);
+  const [isWatering, setIsWatering] = useState(false);
 
   return (
     <div>
       <div id="plantFlower">
         <FlowerForm triggerReload={() => setReloadFlowers(!reloadFlowers)} />
       </div>
+      <div id="waterToggle" style={{ textAlign: 'center', marginBottom: '10px' }}>
+        <button className="waterModeToggle" onClick={() => setIsWatering(!isWatering)}>
+          {isWatering ? 'Exit Water Mode 💧' : 'Enter Water Mode 💧'}
+        </button>
+      </div>
       <div id="flowers">
-        <FlowerList flowers={[]} reloadFlowers={reloadFlowers} triggerReload={() => setReloadFlowers(!reloadFlowers)} />
+        <FlowerList
+          reloadFlowers={reloadFlowers}
+          triggerReload={() => setReloadFlowers(!reloadFlowers)}
+          isWatering={isWatering}
+        />
       </div>
     </div>
   );

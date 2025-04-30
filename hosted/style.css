@@ -5,6 +5,18 @@ html, body {
     background: linear-gradient(to bottom, #e6ffe6, #ffffff);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
+
+  body {
+    background: url('/assets/img/background.png') repeat;
+    background-size: 1470px 980px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  
+  
   
   nav {
     background-color: #a2d5ab;
@@ -134,19 +146,19 @@ html, body {
   }
   
   .flower {
-    background-color: #ffffffdd;
-    border: 2px solid #aed581;
-    border-radius: 16px;
-    padding: 16px;
-    width: 240px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(34, 139, 34, 0.15);
+    position: absolute;
+    transform: translate(-50%, -50%);
   }
   
   .flowerImage {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 10px;
+    width: 80px;
+    height: 80px;
+    pointer-events: none;
   }
   
   .flowerName {
@@ -185,7 +197,7 @@ html, body {
     margin-top: 40px;
   }
   
-  #domoMessage {
+  #errorLog {
     position: fixed;
     bottom: 0;
     right: 0;
@@ -202,16 +214,40 @@ html, body {
     width: 100%;
   }
   
-  #errorMessage {
-    font-size: 1em;
-    font-weight: bold;
-    color: #d84315;
+  #errorLog {
+    display: none;
   }
   
-  #domo {
+  #sunflower {
     width: 100px;
     height: auto;
     transform: rotate(330deg);
     margin-top: 10px;
   }
+
+  .nameTag {
+    background-color: #f1f1f1;
+    color: #4a4a4a;
+    font-size: 0.9em;
+    text-align: center;
+    padding: 4px 6px;
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+  
+  .flowerDetails {
+    position: absolute;
+    top: 100%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffffcc;
+    border: 2px solid #aed581;
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 4px;
+    box-shadow: 0 4px 8px rgba(34, 139, 34, 0.15);
+    width: max-content;
+    z-index: 10;
+  }
+  
   
