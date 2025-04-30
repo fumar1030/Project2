@@ -4,6 +4,7 @@ module.exports = {
     entry: {
         app: './client/garden.jsx',
         login: './client/login.jsx',
+        change: './client/changePassword.jsx',
     },
     module: {
         rules: [

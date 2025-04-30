@@ -5,6 +5,10 @@ const loginPage = (req, res) => {
     return res.render('login');
 };
 
+const changePasswordPage = (req, res) => {
+    res.render('changePassword');
+};
+
 const logout = (req, res) =>{
     req.session.destroy();
     return res.redirect('/');
@@ -72,7 +76,35 @@ const buyMoreSpace = async (req, res) => {
       return res.status(500).json({ error: 'Could not increase flower capacity.' });
     }
   };
-   
+
+const changePassword = (req, res) => {
+const { oldPass, newPass, newPass2 } = req.body;
+
+if (!oldPass || !newPass || !newPass2) {
+    return res.status(400).json({ error: 'All fields are required' });
+}
+
+if (newPass !== newPass2) {
+    return res.status(400).json({ error: 'New passwords do not match' });
+}
+
+Account.authenticate(req.session.account.username, oldPass, async (err, account) => {
+    if (err || !account) {
+    return res.status(401).json({ error: 'Incorrect current password' });
+    }
+
+    try {
+    const hash = await Account.generateHash(newPass);
+    account.password = hash;
+    await account.save();
+
+    return res.status(200).json({ message: 'Password updated successfully' });
+    } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: 'Error saving new password' });
+    }
+});
+}; 
 
 module.exports ={
     loginPage,
@@ -80,4 +112,6 @@ module.exports ={
     login,
     signup,
     buyMoreSpace,
+    changePassword,
+    changePasswordPage,
 }

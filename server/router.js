@@ -11,6 +11,9 @@ const router = (app) => {
 
     app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
+    app.get('/changePassword', mid.requiresLogin, controllers.Account.changePasswordPage);
+    app.post('/changePassword', mid.requiresLogin, controllers.Account.changePassword);
+
     //Garden related calls
     app.get('/garden', mid.requiresLogin, controllers.Flower.gardenPage);
     app.get('/getFlowers', mid.requiresLogin, controllers.Flower.getFlowers);
